@@ -6,10 +6,10 @@ import (
 )
 
 type PersonService struct {
-	PersonDao *dao.PersonDao
+	PersonDao dao.PersonDaoInterface
 }
 
-func NewPersonService(dao *dao.PersonDao) *PersonService {
+func NewPersonService(dao dao.PersonDaoInterface) *PersonService {
 	return &PersonService{PersonDao: dao}
 }
 
@@ -25,7 +25,7 @@ func (s *PersonService) GetPersonByName(fullName string) ([]models.Person, error
 	return s.PersonDao.GetPersonByName(fullName)
 }
 
-func (s *PersonService) GetAllPerson() ([]models.Person, error) {
+func (s *PersonService) GetAllPersons() ([]models.Person, error) {
 	return s.PersonDao.GetAllPersons()
 }
 

@@ -7,6 +7,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+type PersonDaoInterface interface {
+	CreatePerson(p *models.Person) error
+	UpdatePerson(id int, p *models.Person) error
+	GetPersonByName(fullName string) ([]models.Person, error)
+	GetAllPersons() ([]models.Person, error)
+	DeletePerson(id int) error
+}
+
 type PersonDao struct {
 	DB *pgx.Conn
 }
@@ -58,11 +66,6 @@ func (dao *PersonDao) GetAllPersons() ([]models.Person, error) {
 		}
 		persons = append(persons, p)
 	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return persons, nil
 }
 

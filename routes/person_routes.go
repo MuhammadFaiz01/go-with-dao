@@ -28,12 +28,7 @@ func SetupPersonRoutes(r *gin.Engine, service *services.PersonService) {
 	})
 
 	personRoutes.PUT("/", func(c *gin.Context) {
-		idStr := c.DefaultQuery("id", "")
-		if idStr == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required"})
-			return
-		}
-
+		idStr := c.Query("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -55,37 +50,26 @@ func SetupPersonRoutes(r *gin.Engine, service *services.PersonService) {
 	})
 
 	personRoutes.GET("/", func(c *gin.Context) {
-		fullName := c.DefaultQuery("full_name", "")
-		if fullName == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Full name is required"})
-			return
-		}
-
+		fullName := c.Query("full_name")
 		persons, err := service.GetPersonByName(fullName)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve person"})
 			return
 		}
-
 		c.JSON(http.StatusOK, persons)
 	})
 
 	personRoutes.GET("/all", func(c *gin.Context) {
-		persons, err := service.GetAllPerson()
+		persons, err := service.GetAllPersons()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to get person"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve persons"})
 			return
 		}
 		c.JSON(http.StatusOK, persons)
 	})
 
 	personRoutes.DELETE("/", func(c *gin.Context) {
-		idStr := c.DefaultQuery("id", "")
-		if idStr == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required"})
-			return
-		}
-
+		idStr := c.Query("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -96,7 +80,6 @@ func SetupPersonRoutes(r *gin.Engine, service *services.PersonService) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete person"})
 			return
 		}
-
 		c.JSON(http.StatusOK, gin.H{"message": "Person deleted successfully"})
 	})
 }
