@@ -82,4 +82,34 @@ func SetupPersonRoutes(r *gin.Engine, service *services.PersonService) {
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "Person deleted successfully"})
 	})
+
+	personRoutes.GET("/export", func(c *gin.Context) {
+		filepath := "persons.xlsx"
+		if err := service.ExportPersons(filepath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to export persons"})
+			return
+		}
+		c.File(filepath)
+	})
+
+	personRoutes.POST("/import", func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file"})
+			return
+		}
+
+		filePath := "uploaded_" + file.Filename
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save file"})
+			return
+		}
+
+		if err := service.ImportFromExcel(filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to import data"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Data imported successfully"})
+	})
 }
