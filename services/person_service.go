@@ -3,8 +3,6 @@ package services
 import (
 	"go-dao/dao"
 	"go-dao/models"
-	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -39,8 +37,7 @@ func (s *PersonService) DeletePerson(id int) error {
 	return s.PersonDao.DeletePerson(id)
 }
 
-func (s *PersonService) ExportPersons(filePath string) error {
-
+func (s *PersonService) ExportPersons(filepath string) error { // corrected here
 	persons, err := s.PersonDao.GetAllPersons()
 	if err != nil {
 		return err
@@ -65,16 +62,7 @@ func (s *PersonService) ExportPersons(filePath string) error {
 		f.SetCellValue(sheet, "E"+row, person.Address)
 	}
 
-	dir := filepath.Dir(filePath)
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-		return err
-	}
-
-	if err := f.SaveAs(filePath); err != nil {
-		return err
-	}
-
-	return nil
+	return f.SaveAs(filepath)
 }
 
 func (s *PersonService) ImportFromExcel(filePath string) error {

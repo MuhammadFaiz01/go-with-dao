@@ -1,8 +1,10 @@
 package models
 
+import "github.com/google/uuid"
+
 type Kelas struct {
-	ID        int    `json:"id"`
-	NamaKelas string `json:"nama_kelas"`
-	Tingkat   int    `json:"tingkat"`
-	IdPerson  int    `json:"id_person"`
+	ID        uuid.UUID `json:"id"`
+	NamaKelas string    `json:"nama_kelas"`
+	Tingkat   int       `json:"tingkat"`
+	IdPerson  int       `json:"id_person"`
 }
